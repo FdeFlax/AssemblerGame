@@ -17,6 +17,29 @@
 
 SECTION "Entry point", ROM0[$150]
 
+Setup:
+   call copiaRutinaDMA ;;Antes de nada copiamos la rutina DMA en HRAM
+   call interruptSetup ;;Habilitamos las interrupciones; en cada vblank habrá una transferencia DMA
+   call Apagar_pantalla ;;Apagamos la pantalla para poder borrar y cargar los tiles
+   call Borrar_pantalla ;;Borramos la pantalla
+   call Cargar_tiles    ;;Cargamos los tiles aprovechando la pantalla apagada
+ret
+
 main::
+   call Setup
+   call Encender_pantalla ;;Encendemos la pantalla de nuevo
+   call borrarOAM         ;;Borramos el contenido de la OAM (en la copia)
+   ld de, playerData      ;;datos de los sprites del jugador en manager.asm
+   call initEntity        ;; Iniciamos la estructura donde esta nuestro jugador
+   call configSprites     ;;Configuramos tanto la PPU para aceptar tiles, ademas escribimos estos valores en la copia de la OAM
+
+
+   .loop:
+      ld de, entityArray
+      call updatePos
+      call updateOAM
+      call waitVBlank
+      jp .loop
+   jr @
    di     ;; Disable Interrupts
    halt   ;; Halt the CPU (stop procesing here)
