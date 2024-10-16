@@ -88,8 +88,8 @@ SECTION "Utils", ROM0
 
   Cargar_tiles::
     ld hl, $8000 ;; donde queremos empezar a escribir
-    ld de, inicioTiles ;; principio de nuestros tiles
-    ld bc, finSpriteJugador - spriteJugador ;;Contador
+    ld de, Nave ;; principio de nuestros tiles
+    ld bc, Nav_end - Nave ;;Contador
     .loop:
       ld a, [de] ;cargamos el valor al que apunta de en a
       ld [hl+], a ;;escribimos ese valor en la vram
@@ -120,9 +120,9 @@ SECTION "Utils", ROM0
   borrarOAM::
     ld hl, copiaOAM ;;puntero al inicio de la OAM
     ld b, 40     ;;40 entradas de la OAM
+    ld a, $00
 
     .borradoOAM:
-      ld a, $00
       ld [hl+], a ;;POscion y a 0
       ld [hl+], a ;;POsicion x a 0
       inc hl
