@@ -16,9 +16,9 @@ SECTION "Entity data", ROM0
         ld a, [de]
         ld [entityArray + ENTITY_SPRITE_2],a
 
-        ld a, 10
+        ld a, 130
         ld [entityArray + ENTITY_POSY], a
-        ld a, 100
+        ld a, 90
         ld [entityArray + ENTITY_POSX], a
         ;Velocidad
         ld a , 3

@@ -3,18 +3,13 @@ SECTION "Fisicas", ROM0
     
     ;Actualiza la posicon del sprite del jugador en funcion de su velocidad
     ;Parametros de entrada:  DE direccion de la entidad
+    ;Input b: direccion de movimiento
     updatePos::
         ;Actualizar la poscion en X
         ld a, [entityArray + ENTITY_POSX]
-        ld hl, entityArray + ENTITY_VX
-        add [hl]
+        add b
         ld [entityArray + ENTITY_POSX], a 
-        ;Actualizar la poscion en Y
-        ld a, [entityArray + ENTITY_POSY]
-        ld hl, entityArray + ENTITY_VY
-        add [hl]
-        ld [entityArray + ENTITY_POSY], a 
-
+        call waitVBlank
         ret
 
     updateOAM::

@@ -36,9 +36,8 @@ main::
 
    .loop:
       ld de, entityArray
-      call updatePos
+      call updateMove
       call updateOAM
-      call waitVBlank
       jp .loop
    jr @
    di     ;; Disable Interrupts

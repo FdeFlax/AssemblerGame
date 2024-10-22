@@ -23,7 +23,7 @@ SECTION "Utils", ROM0
     push hl
     push af
 
-    ;;all leerBotones  ;;Actualizamos el estado de los botones aprobechando el vblack por frame
+    call leerBotones  ;;Actualizamos el estado de los botones aprobechando el vblack por frame
     call OAMDMA       ;;Llama a la funcion que inicia la transferencia DMA en la HRAM
     ld hl, vblankFlag
     ld a, 1
@@ -41,7 +41,7 @@ SECTION "Utils", ROM0
     ld hl, vblankFlag
     xor a
     ld [hl], a
-    ld c, 5 ;;contador de cuantos vblanck esperar
+    ld c, 1 ;;contador de cuantos vblanck esperar
 
 
     .wait:
