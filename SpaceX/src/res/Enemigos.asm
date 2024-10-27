@@ -137,4 +137,6 @@ DB $E0,$48,$E0,$08,$E0,$08,$C0,$08
 DB $C0,$38,$C0,$F0,$C0,$F0,$C0,$3C
 DB $C0,$FC,$00,$0C,$00,$00,$00,$00
 
+EnemigosFin::
+
 ; End of ENEMIGOS.Z80

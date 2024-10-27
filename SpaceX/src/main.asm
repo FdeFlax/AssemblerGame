@@ -23,21 +23,35 @@ Setup:
    call Apagar_pantalla ;;Apagamos la pantalla para poder borrar y cargar los tiles
    call Borrar_pantalla ;;Borramos la pantalla
    call Cargar_tiles    ;;Cargamos los tiles aprovechando la pantalla apagada
+   call Cargar_tile_enemigos
 ret
 
 main::
+   ld a, 30          
+   ld [posicionXBase], a 
+
    call Setup
    call Encender_pantalla ;;Encendemos la pantalla de nuevo
    call borrarOAM         ;;Borramos el contenido de la OAM (en la copia)
    ld de, playerData      ;;datos de los sprites del jugador en manager.asm
    call initEntity        ;; Iniciamos la estructura donde esta nuestro jugador
+   ld de, enemy2Data
+   call initEnemy
+   ld de, enemy3Data
+   call initEnemy
+   ld de, enemy1Data
+   call initEnemy
+      ; Inicializar el jugador
+    ld bc, ENTITY_SIZE 
    call configSprites     ;;Configuramos tanto la PPU para aceptar tiles, ademas escribimos estos valores en la copia de la OAM
 
 
    .loop:
       ld de, entityArray
       call updateMove
+      call updatePosEnemigos
       call updateOAM
+      call waitVBlank
       jp .loop
    jr @
    di     ;; Disable Interrupts

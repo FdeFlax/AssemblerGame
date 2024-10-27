@@ -9,13 +9,17 @@ SECTION "Interrupts", ROM0[$40]
   ds 5, 0 ;Deja 5 byts de espacio vacios
 
 SECTION "Variables", WRAM0
+  EXPORT posicionXBase
+  EXPORT posicionXAnterior
   vblankFlag:
   ds 1
 
   FirstLineFlag:
   ds 1
 
+  posicionXBase: ds 1
 
+  posicionXAnterior: ds 1
 
 SECTION "Utils", ROM0
 
@@ -99,6 +103,21 @@ SECTION "Utils", ROM0
       or c
       jr nz, .loop
   ret
+
+  Cargar_tile_enemigos::
+    ld hl, $8800 ;; donde queremos empezar a escribir
+    ld de, Enemigos ;; principio de nuestros tiles
+    ld bc, EnemigosFin - Enemigos ;;Contador
+    .loop:
+      ld a, [de] ;cargamos el valor al que apunta de en a
+      ld [hl+], a ;;escribimos ese valor en la vram
+      inc de
+      dec bc
+      ld a, b
+      or c
+      jr nz, .loop
+  ret
+
 
   Borrar_pantalla::
     ld hl, $9800 ;;Cargamos en hl el principio de la pantalla
