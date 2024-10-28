@@ -2,8 +2,8 @@
 
     DEF ENEMY1_SPRITE_ID1 equ $80
     DEF ENEMY1_SPRITE_ID2 equ $82
-    DEF ENEMY1_POSX       equ $20
-    DEF ENEMY1_POSY       equ $02
+    DEF ENEMY1_POSX       equ $00
+    DEF ENEMY1_POSY       equ $00
     DEF ENEMY1_VX         equ $01
     DEF ENEMY1_VY         equ $00
 
@@ -11,17 +11,28 @@
     DEF ENEMY2_SPRITE_ID1 equ $84
     DEF ENEMY2_SPRITE_ID2 equ $86
     DEF ENEMY2_POSX       equ $00
-    DEF ENEMY2_POSY       equ $03
+    DEF ENEMY2_POSY       equ $10
     DEF ENEMY2_VX         equ $01
     DEF ENEMY2_VY         equ $00
+
 
     ; Enemy 3 Constants
     DEF ENEMY3_SPRITE_ID1 equ $88
     DEF ENEMY3_SPRITE_ID2 equ $8A
     DEF ENEMY3_POSX       equ $00
-    DEF ENEMY3_POSY       equ $00
+    DEF ENEMY3_POSY       equ $20
     DEF ENEMY3_VX         equ $01
     DEF ENEMY3_VY         equ $00
+
+    ; Enemy 4 Constants
+    DEF ENEMY4_SPRITE_ID1 equ $AA
+    DEF ENEMY4_SPRITE_ID2 equ $AA
+    DEF ENEMY4_POSX       equ $00
+    DEF ENEMY4_POSY       equ $30
+    DEF ENEMY4_VX         equ $01
+    DEF ENEMY4_VY         equ $00
+
+ 
 
 
     DEF POSY equ 80
@@ -50,6 +61,11 @@ SECTION "Entity data", ROM0
 
     enemy3Data:
     DB ENEMY3_SPRITE_ID1, ENEMY3_SPRITE_ID2, ENEMY3_POSY, ENEMY3_POSX, ENEMY3_VY, ENEMY3_VX
+
+    enemy4Data:
+    DB ENEMY4_SPRITE_ID1, ENEMY4_SPRITE_ID2, ENEMY4_POSY, ENEMY4_POSX, ENEMY4_VY, ENEMY4_VX
+
+  
 
 ;;METODOS ANTIGUOS
     ;     initEntity::
@@ -133,6 +149,7 @@ SECTION "Entity data", ROM0
     initEnemy:
     ; Llamada para buscar un hueco y reservar espacio para la entidad
     ; ld hl, entityArray
+    push bc
     ld bc, ENTITY_SIZE
     ld a, 01
     ld [hl], a
@@ -181,7 +198,7 @@ SECTION "Entity data", ROM0
 
     ; Reducir posicionXBase en 10 para la siguiente entidad
     ld a, [posicionXBase]
-    add 20
+    add 10
     ld [posicionXBase], a 
 
 
@@ -207,6 +224,7 @@ SECTION "Entity data", ROM0
 
     
     add hl, bc
+    pop bc
     ret
 
 
@@ -278,6 +296,7 @@ SECTION "Entity data", ROM0
         ld [hl], a        ; Guardar en la entidad
         pop bc
         pop hl
+
 
         add hl, bc ; para avanzar en el bucle
         ret
@@ -381,6 +400,57 @@ SECTION "Entity data", ROM0
       .fin:
       ret
 
+    bucleenemigos:
+        ld c, MAX_ENTITIES   ; Número máximo de entidades a generar
+        ld b, 3              ; Inicializar `a` para alternar entre los tres tipos (0, 1, 2)
+
+       ; Comprobar el valor de `b` para decidir qué enemigo crear
+    .loop
+            ld a, b
+            cp 0
+            jr z, .crearEnemy1
+            cp 1
+            jr z, .crearEnemy2
+            cp 2
+            jr z, .crearEnemy3
+            cp 3
+            jr z, .crearEnemy4
+
+
+        .continuar:
+            dec c                ; Disminuir el contador
+            jr z, .fin           ; Si `c` llega a 0, salir del bucle
+
+            inc b                ; Incrementar `b` para pasar al siguiente tipo de enemigo
+            cp 4                 ; Limitar `b` a valores de 0-5
+            jr c, .loop          ; Si `b` es menor que 6, continuar el bucle
+            ld b, 0              ; Reiniciar `b` a 0 si supera 5
+            jp .loop
+
+        .crearEnemy1:
+            ld de, enemy1Data
+            jp .crear
+
+        .crearEnemy2:
+            ld de, enemy2Data
+            jp .crear
+
+        .crearEnemy3:
+            ld de, enemy3Data
+            jp .crear
+
+        .crearEnemy4:
+            ld de, enemy4Data
+            jp .crear
+
+
+        .crear:
+            call initEnemy       ; Inicializar la entidad
+            jp .continuar        ; Continuar con el siguiente enemigo
+
+        .fin:
+            ret
+
 
 SECTION "Entity array", WRAM0
 
@@ -403,7 +473,7 @@ SECTION "Entity array", WRAM0
     
       ; Definir tamaño de cada entidad y el tamaño total del array de entidades
     DEF ENTITY_SIZE     equ 7      ; Tamaño de cada entidad (8 bytes, con los atributos)
-    DEF MAX_ENTITIES    equ 4    ; Número máximo de entidades
+    DEF MAX_ENTITIES    equ 20    ; Número máximo de entidades
     DEF ENTITY_ARRAY_SIZE equ ENTITY_SIZE * MAX_ENTITIES  ; Tamaño total del array
 
     RSRESET
@@ -428,3 +498,5 @@ SECTION "Entity array", WRAM0
 SECTION "Entity OAM Data", WRAM0
 ENTITY_OAM_ADDRESS: 
     DS 2  ; Espacio para la dirección de OAM (2 bytes)
+
+

@@ -34,7 +34,9 @@ updatePos:
     .loop
         ld a, [de]                  
         cp 1                         
-        jp nz, .fin                  
+        jp nz, .continuacion                  ; Si no está activa, continuar al siguiente
+
+        ; Actualizar la posición en X
         push hl
         ld bc, ENTITY_POSX
         ld h, d
@@ -82,8 +84,9 @@ updatePos:
         add [hl]                   
         pop hl
 
+        ; Comprobar si toca el borde inferior
         cp SCREEN_BOTTOM_BOUND       
-        jr nc, .reverse_direction_y 
+        jp nc, .eliminar_entidad    ; Si toca el límite inferior, eliminar
 
         cp SCREEN_TOP_BOUND          
         jr c, .reverse_direction_y  
@@ -109,9 +112,9 @@ updatePos:
         pop bc
 
         dec c
-        jp z, .fin                   ; Si se procesaron todas las entidades, terminar
+        jp nz, .loop                   ; Si se procesaron todas las entidades, terminar
 
-        jp .loop
+        ret
 
     .reverse_direction_x:
         push hl
@@ -146,9 +149,8 @@ updatePos:
     ld a, [hl]
     xor $FF                       ; Invertir la velocidad en Y
     inc a
-    ld [hl], a                   
+    ld [hl], a                    ; Invertir la velocidad Y en lugar de enviar al borde opuesto
     pop hl
-
 
     push hl
     ld bc, ENTITY_POSY
@@ -156,14 +158,27 @@ updatePos:
     ld l, e
     add hl, bc
     ld a, [hl]
-    sub 10                        ; Reducir Y en 10 si toca el borde inferior
-    ld [hl], a
+    sub 10                        ; Reducir Y en 10
+    ld [hl], a                   
     pop hl
 
     jp .continuacion
 
+.eliminar_entidad:
+    push hl
+    ld bc, ENTITY_COMPONENT
+    ld h, d
+    ld l, e
+    add hl, bc
+    ld a, 0                        ; Cargar 0 en `a` para desactivar la entidad
+    ld [hl], a                     ; Marcar entidad como inactiva
+    pop hl
+    jp .continuacion
+
     .fin:
         ret
+
+
 
 
 updateOAM::
@@ -174,7 +189,7 @@ updateOAM::
             .loop
                 ld a, [de]
                 cp 1
-                jr nz, .fin
+                jr nz, .continuar
 
                 push bc
 
@@ -224,9 +239,10 @@ updateOAM::
 
             pop bc                     ; Guardar la posición X en la OAM
                 ; Fin de la actualización de la OAM
+            .continuar
                 dec c
                 jr z, .fin
-
+            
                 push bc
                 push hl
                 ld bc, ENTITY_SIZE

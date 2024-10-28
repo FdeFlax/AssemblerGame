@@ -35,12 +35,11 @@ main::
    call borrarOAM         ;;Borramos el contenido de la OAM (en la copia)
    ld de, playerData      ;;datos de los sprites del jugador en manager.asm
    call initEntity        ;; Iniciamos la estructura donde esta nuestro jugador
-   ld de, enemy2Data
-   call initEnemy
-   ld de, enemy3Data
-   call initEnemy
-   ld de, enemy1Data
-   call initEnemy
+
+
+   call bucleenemigos
+
+
       ; Inicializar el jugador
     ld bc, ENTITY_SIZE 
    call configSprites     ;;Configuramos tanto la PPU para aceptar tiles, ademas escribimos estos valores en la copia de la OAM
