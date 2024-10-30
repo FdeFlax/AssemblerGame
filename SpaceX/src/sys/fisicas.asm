@@ -103,7 +103,6 @@ checkearposiciones:
         pop hl
         jr c, .continuacion
 
-        
         ld a, b
         add 16
         ld b, a
@@ -128,7 +127,13 @@ checkearposiciones:
         ld a, 115
         cp b
         pop hl
+        jr nc, .continuacion
 
+        ld a, b
+        add 16
+        ld b, a
+        ld a, 130
+        cp b
         jr nc, .continuacion
 
         push hl
@@ -153,6 +158,133 @@ checkearposiciones:
         ret
         
     
+
+checkearHit:
+
+    ; obtener bala y comprobar si esta activa
+    ; si esta activa obtener los enemigos del entity array
+    ; comprobar uno a uno si se solapan
+    ; en caso de solaparse desactivar la bala y el enemigo, tambien mover el enemigo a 0,0
+    ; en caso de no solaparse no deberia pasar nada, la bala se desactivara sola al salir de la pantalla
+
+    ld a, [bullet_active]
+    cp 0
+    jp z, fueraLimites
+
+
+    ld c, MAX_ENTITIES                    
+    ld de, entityArray   
+        
+    push hl
+    ld hl, entityArray
+    ld de, ENTITY_SIZE
+    add hl, de
+    ld d, h
+    ld e, l
+    pop hl
+        
+
+    .loop
+        ld a, [de]                  
+        cp 1                         
+        jp nz, .continuacion  
+        
+        ld a, [bullet_active]
+        cp 0
+        jp z, fueraLimites                ; Si no está activa, continuar al siguiente
+        
+        ; Actualizar la posición en X
+        push hl
+        push bc
+        ld bc, ENTITY_POSX
+        ld h, d
+        ld l, e
+        add hl, bc                   ; Calcular posición ENTITY_POSX en la entidad
+        pop bc
+
+
+        ld a, [hl]
+        ld b, a
+        ld a, [bullet_posx]
+        add 10
+        cp b
+        pop hl
+        jr c, .continuacion
+
+
+        ld a, b
+        add 16
+        ld b, a
+        ld a, [bullet_posx]
+        add 4
+        cp b
+        jr nc, .continuacion
+        
+
+        push hl
+        push bc
+        ld bc, ENTITY_POSY
+        ld h, d
+        ld l, e
+        add hl, bc
+        pop bc                   ; Calcular posición ENTITY_POSX en la entidad
+
+
+        ld a, [hl]
+        ld b, a
+        ld a, [bullet_posy]
+        add 8
+        cp b
+        pop hl
+        jr c, .continuacion
+
+        ld a, b
+        add 16
+        ld b, a
+        ld a, [bullet_posy]
+        add 4
+        cp b
+        jr nc, .continuacion
+
+
+        call .desactivarBala
+
+; -------------------------------------------------------------
+; 
+;                  DESACTIVAR ENEMIGO
+; 
+; -------------------------------------------------------------
+
+
+        .continuacion
+        push bc
+        push hl
+        ld bc, ENTITY_SIZE           ; Tamaño de cada entidad
+        ld h, d
+        ld l, e
+        add hl, bc                   ; Avanzar a la siguiente entidad
+        ld d, h
+        ld e, l
+        pop hl
+        pop bc
+
+        dec c
+        jp nz, .loop                   ; Si se procesaron todas las entidades, terminar
+
+        ret
+
+ret
+
+.desactivarBala:
+
+    ld a, 0
+    call waitVBlank
+    ld [bullet_active], a
+    ld [copiaOAM + 30*4], a
+    ld [copiaOAM + 31*4], a
+
+ret
+
 irEstadoInicio:
     ld a, 00
     ld [gameState],a
@@ -407,4 +539,3 @@ updateOAM::
     ;     add 8  
     ;     ld [hl],a  
     ;     ret
-      

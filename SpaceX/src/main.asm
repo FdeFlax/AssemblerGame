@@ -77,11 +77,13 @@ main::
       call configSprites
       call Cambiar_banco_fondo 
       call Cargar_mapa
+      call initBullet
          .gameplay:
          ld de, entityArray
          call updateMove
          call updatePosEnemigos
          call checkearposiciones
+         call checkearHit
          call verificar_terminajuego
          call disparar
          call update_bullet

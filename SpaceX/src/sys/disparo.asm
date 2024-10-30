@@ -94,7 +94,13 @@ update_bullet:
 
 
 
+initBullet::
 
+    ld a, 0
+    ld [bullet_active],a
+    ld [bullet_posx],a
+    ld [bullet_posy],a
+    ret
 
 SECTION "Bullet Data", WRAM0
     bullet_active:   ds 1     ; Estado del disparo (1 = activo, 0 = inactivo)
