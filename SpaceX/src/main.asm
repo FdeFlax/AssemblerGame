@@ -18,40 +18,77 @@
 SECTION "Entry point", ROM0[$150]
 
 Setup:
+   ld a, 00
+   ld [gameState],a
    call copiaRutinaDMA ;;Antes de nada copiamos la rutina DMA en HRAM
    call interruptSetup ;;Habilitamos las interrupciones; en cada vblank habrá una transferencia DMA
    call Apagar_pantalla ;;Apagamos la pantalla para poder borrar y cargar los tiles
    call Borrar_pantalla ;;Borramos la pantalla
    call Cargar_tiles    ;;Cargamos los tiles aprovechando la pantalla apagada
    call Cargar_tile_enemigos
+   call Cargar_letras
 ret
 
+
 main::
-   ld a, 30          
-   ld [posicionXBase], a 
+   ; En el archivo principal (main.asm o similar)
+   
 
    call Setup
    call Encender_pantalla ;;Encendemos la pantalla de nuevo
    call borrarOAM         ;;Borramos el contenido de la OAM (en la copia)
-   ld de, playerData      ;;datos de los sprites del jugador en manager.asm
-   call initEntity        ;; Iniciamos la estructura donde esta nuestro jugador
 
+   EstadoInicio:
+      push hl
+      push de
+      ld hl, linea
+      call escribeDialogo
+      pop de
+      pop hl
 
-   call bucleenemigos
+      .loop:
 
+      
+         call pulsarparainiciarjuego    
+         ld a, [gameState]
+         cp 01
+         jr z, EstadoJuego          
+                  
+      jp .loop 
+   ret
+
+   EstadoJuego:
+      ld a, 30          
+      ld [posicionXBase], a 
+      push hl
+      push de
+      ld hl, linea2
+      call escribeDialogo
+      pop de
+      pop hl
+      ld de, playerData      ;;datos de los sprites del jugador en manager.asm
+      call initEntity        ;; Iniciamos la estructura donde esta nuestro jugador
+
+      call bucleenemigos
 
       ; Inicializar el jugador
-    ld bc, ENTITY_SIZE 
-   call configSprites     ;;Configuramos tanto la PPU para aceptar tiles, ademas escribimos estos valores en la copia de la OAM
+      ld bc, ENTITY_SIZE 
+      call configSprites 
+         .gameplay:
+         ld de, entityArray
+         call updateMove
+         call updatePosEnemigos
+         call checkearposiciones
+         call verificar_terminajuego
+         call disparar
+         call update_bullet
+         call updateOAM
+         call waitVBlank
+         jp .gameplay
+   ret
 
 
-   .loop:
-      ld de, entityArray
-      call updateMove
-      call updatePosEnemigos
-      call updateOAM
-      call waitVBlank
-      jp .loop
    jr @
    di     ;; Disable Interrupts
    halt   ;; Halt the CPU (stop procesing here)
+

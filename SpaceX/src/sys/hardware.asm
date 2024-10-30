@@ -63,5 +63,21 @@ updateMove::
 
 ret
 
+;; Función que lee el botón "A"
+pulsarparainiciarjuego ::
+    ldh a, [flancoAscendente]   
+    and %00000001               
+    ret z                      
+    ld a, 01                      
+    ld [gameState], a
+    
+    ret
 
 
+disparar:
+    ldh a, [flancoAscendente]  
+    and %00000001              
+    ret z                      
+    call fire_bullet
+    
+    ret

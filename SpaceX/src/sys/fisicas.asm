@@ -2,8 +2,8 @@ DEF SCREEN_TOP_BOUND equ 0         ; Límite superior
 DEF SCREEN_BOTTOM_BOUND equ 144     ; Límite inferior (altura de la pantalla Game Boy)
 DEF SCREEN_LEFT_BOUND equ 0      ; Límite izquierdo
 DEF SCREEN_RIGHT_BOUND equ 160   ; Límite derecho (resolución de la pantalla Game Boy)
-DEF mas4 equ 8
-DEF masocho equ 4
+
+
 
 SECTION "Fisicas", ROM0
 
@@ -14,12 +14,137 @@ SECTION "Fisicas", ROM0
 updatePos:
   ;Actualizar la poscion en X
     ld a, [entityArray + ENTITY_POSX]
+    ld [posicionXNave],a
     add b
     ld [entityArray + ENTITY_POSX], a 
     call waitVBlank
     ret
 
+    ;--------VER SI UN ENEMIGO HA TOCADO LA NAVE
+verificar_terminajuego:
+    ld hl, terminajuego       
+    ld a, [hl]                 
+    cp 0                 
+    jr nz, .fin               
 
+    inc hl                    
+    ld a, [hl]                 
+    cp 0                   
+    jr nz, .fin                
+
+    call irEstadoInicio
+
+.fin:
+    ret                        ; Retornar
+
+empiezajuego1:
+    ld hl, terminajuego    ; Cargar la dirección de terminajuego en HL
+    ld [hl], 1          ; Poner el primer byte a 0x01
+    ret                    ; Retornar
+empiezajuego2:
+    ld hl, terminajuego    ; Cargar la dirección de terminajuego en HL
+    inc hl                 ; Avanzar a la segunda parte (segundo byte)
+    ld [hl], 1          ; Poner el segundo byte a 0x01
+    ret                    ; Retornar
+
+terminajuego1:
+    ld hl, terminajuego    ; Cargar la dirección de terminajuego en HL
+    ld [hl], 0             ; Poner el primer byte a 0
+    ret 
+
+terminajuego2:
+    ld hl, terminajuego    ; Cargar la dirección de terminajuego en HL
+    inc hl                 ; Avanzar a la segunda parte (segundo byte)
+    ld [hl], 0             ; Poner el segundo byte a 0
+    ret 
+checkearposiciones:
+    
+        ld c, MAX_ENTITIES                    
+        ld de, entityArray   
+        ld a, [entityArray + ENTITY_POSX]
+        ld [posicionXNave],a  
+        call empiezajuego1
+        call empiezajuego2
+            
+        push hl
+        ld hl, entityArray
+        ld de, ENTITY_SIZE
+        add hl, de
+        ld d, h
+        ld e, l
+        pop hl
+        
+
+    .loop
+        ld a, [de]                  
+        cp 1                         
+        jp nz, .continuacion                  ; Si no está activa, continuar al siguiente
+        
+        ; Actualizar la posición en X
+        push hl
+        push bc
+        ld bc, ENTITY_POSX
+        ld h, d
+        ld l, e
+        add hl, bc                   ; Calcular posición ENTITY_POSX en la entidad
+        pop bc
+        
+        ld a, [hl]
+        ld b, a
+        ld a, [posicionXNave]
+        cp b
+        pop hl
+        jr nz, .continuacion
+
+        push hl
+        call terminajuego1
+        pop hl
+        
+        push hl
+        push bc
+        ld bc, ENTITY_POSY
+        ld h, d
+        ld l, e
+        add hl, bc
+        pop bc                   ; Calcular posición ENTITY_POSX en la entidad
+        ld a, [hl]
+        ld b, a
+        ld a, 128
+        cp b
+        pop hl
+        
+        jr nz, .continuacion
+        push hl
+        call terminajuego2
+        pop hl
+
+        .continuacion
+        push bc
+        push hl
+        ld bc, ENTITY_SIZE           ; Tamaño de cada entidad
+        ld h, d
+        ld l, e
+        add hl, bc                   ; Avanzar a la siguiente entidad
+        ld d, h
+        ld e, l
+        pop hl
+        pop bc
+
+        dec c
+        jp nz, .loop                   ; Si se procesaron todas las entidades, terminar
+
+        ret
+        
+    
+irEstadoInicio:
+    ld a, 00
+    ld [gameState],a
+    call borrarOAM
+    call EstadoInicio
+    ret
+
+
+;;-------------ACTUALIZAR POSICIONES
  updatePosEnemigos::
     ld c, MAX_ENTITIES                    
     ld de, entityArray           
@@ -35,14 +160,15 @@ updatePos:
         ld a, [de]                  
         cp 1                         
         jp nz, .continuacion                  ; Si no está activa, continuar al siguiente
-
+        
         ; Actualizar la posición en X
         push hl
         ld bc, ENTITY_POSX
         ld h, d
         ld l, e
         add hl, bc                   ; Calcular posición ENTITY_POSX en la entidad
-        ld a, [hl]                   
+        ld a, [hl]      
+                     
         pop hl
 
         push hl
@@ -85,8 +211,8 @@ updatePos:
         pop hl
 
         ; Comprobar si toca el borde inferior
-        cp SCREEN_BOTTOM_BOUND       
-        jp nc, .eliminar_entidad    ; Si toca el límite inferior, eliminar
+  
+        
 
         cp SCREEN_TOP_BOUND          
         jr c, .reverse_direction_y  
@@ -164,19 +290,8 @@ updatePos:
 
     jp .continuacion
 
-.eliminar_entidad:
-    push hl
-    ld bc, ENTITY_COMPONENT
-    ld h, d
-    ld l, e
-    add hl, bc
-    ld a, 0                        ; Cargar 0 en `a` para desactivar la entidad
-    ld [hl], a                     ; Marcar entidad como inactiva
-    pop hl
-    jp .continuacion
 
-    .fin:
-        ret
+
 
 
 

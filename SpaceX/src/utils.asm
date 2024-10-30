@@ -21,6 +21,10 @@ SECTION "Variables", WRAM0
 
   posicionXAnterior: ds 1
 
+  posicionXNave: ds 1
+  
+  terminajuego: ds 2
+
 SECTION "Utils", ROM0
 
   vblankHandler::
@@ -94,6 +98,20 @@ SECTION "Utils", ROM0
     ld hl, $8000 ;; donde queremos empezar a escribir
     ld de, Nave ;; principio de nuestros tiles
     ld bc, Nav_end - Nave ;;Contador
+    .loop:
+      ld a, [de] ;cargamos el valor al que apunta de en a
+      ld [hl+], a ;;escribimos ese valor en la vram
+      inc de
+      dec bc
+      ld a, b
+      or c
+      jr nz, .loop
+  ret
+
+    Cargar_letras::
+    ld hl, $81A0 ;; donde queremos empezar a escribir
+    ld de, Letras ;; principio de nuestros tiles
+    ld bc, LetrasFin - Letras ;;Contador
     .loop:
       ld a, [de] ;cargamos el valor al que apunta de en a
       ld [hl+], a ;;escribimos ese valor en la vram
@@ -194,6 +212,8 @@ SECTION "OAM DMA", HRAM
   DS rutinaDMA.fin - rutinaDMA
 
 
+SECTION "Game State Variables", WRAM0
+    gameState: ds 1    ; Estado del juego (00 = diálogo, 01 = iniciar juego)
 
 
 

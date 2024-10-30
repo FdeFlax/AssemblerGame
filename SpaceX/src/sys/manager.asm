@@ -35,18 +35,15 @@
  
 
 
-    DEF POSY equ 80
+   
 
-    DEF DEFAULT_CMP equ $01   ; Valor que indica que la entidad está en uso
-
-
-    DEF masocho equ 8
+ ; Valor que indica que la entidad está en uso
 
     DEF SCREEN_WIDTH equ 160    ; Límite derecho de la pantalla en píxeles (ajustable)
     DEF ROW_INCREMENT equ 10  
 
-DEF PLAYER_SPRITE_ID1 equ $00
-DEF PLAYER_SPRITE_ID2 equ $02
+    DEF PLAYER_SPRITE_ID1 equ $00
+    DEF PLAYER_SPRITE_ID2 equ $02
 
 SECTION "Entity data", ROM0 
 
@@ -259,7 +256,7 @@ SECTION "Entity data", ROM0
         pop hl
 
     ; Posición Y
-        ld a, 130                       
+        ld a, 126                       
         push hl
         push bc
         ld bc, ENTITY_POSY
@@ -466,14 +463,13 @@ SECTION "Entity array", WRAM0
     Export numOAM
     EXport MAX_ENTITIES
 
-    
 
     DEF posicionArray equ 0
     DEF numOAM equ 0
     
       ; Definir tamaño de cada entidad y el tamaño total del array de entidades
     DEF ENTITY_SIZE     equ 7      ; Tamaño de cada entidad (8 bytes, con los atributos)
-    DEF MAX_ENTITIES    equ 20    ; Número máximo de entidades
+    DEF MAX_ENTITIES    equ 15   ; Número máximo de entidades
     DEF ENTITY_ARRAY_SIZE equ ENTITY_SIZE * MAX_ENTITIES  ; Tamaño total del array
 
     RSRESET
