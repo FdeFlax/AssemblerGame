@@ -164,9 +164,12 @@ SECTION "Utils", ROM0
     ret
 
   Cargar_mapa::
+    ld a, %11011000
+    ldh [$47], a
     ld hl, mapaTest ;;Puntero a tilemap
     ld de, $9800 ;; puntero a memoria de video
-    ld c, 1 ;; iteraciones
+    ld c, 10 ;; iteraciones
+    ld b, 9
 
     call Apagar_pantalla
     .loop:
@@ -212,11 +215,30 @@ SECTION "Utils", ROM0
           ld a, [hl]       ;; Carga el cuarto tile del metatile
           ld [de], a       ;; Escribe el tile en VRAM (abajo derecha)
           inc de           ;; Avanza al siguiente espacio en VRAM
+
+          ld a, e
+          sub a, $20
+          ld e, a
+          jr nc, .no_carry_down
+          dec d
+          .no_carry_down:
       
       pop hl
       inc hl
       dec c
       jr nz, .loop
+
+      ;;Pasar a la siguiente fila
+      ld a, e
+      add a, $2C
+      ld e, a
+      jr nc, .no_carry_2
+      inc d
+      .no_carry_2:
+      ld c, 10
+      dec b
+      jr nz, .loop
+
 
     call Encender_pantalla
     ret

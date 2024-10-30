@@ -300,7 +300,7 @@ SECTION "Entity data", ROM0
 
     configSprites::
         ;;Poner el registro correspondiente a la paleta OBP0 en 11100100
-        ld a, %11100100
+        ld a, %00011011
         ldh [$48], a
         ;;Ponwe un 1 en el bit 1 de la PPU para poder escribir en OAM... y tambien el el bit 2 para la paleta de color??
         ldh a, [$40] 
