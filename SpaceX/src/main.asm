@@ -48,7 +48,6 @@ main::
       pop hl
 
       .loop:
-
          call Cambiar_banco_fondo_1
          call pulsarparainiciarjuego    
          ld a, [gameState]

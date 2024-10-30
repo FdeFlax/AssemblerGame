@@ -288,6 +288,9 @@ ret
 irEstadoInicio:
     ld a, 00
     ld [gameState],a
+    call Apagar_pantalla
+    call Borrar_pantalla
+    call Encender_pantalla
     call borrarOAM
     call EstadoInicio
     ret
