@@ -27,6 +27,7 @@ Setup:
    call Cargar_tiles    ;;Cargamos los tiles aprovechando la pantalla apagada
    call Cargar_tile_enemigos
    call Cargar_letras
+   call Cargar_Fondos
 ret
 
 
@@ -48,7 +49,7 @@ main::
 
       .loop:
 
-      
+         call Cambiar_banco_fondo_1
          call pulsarparainiciarjuego    
          ld a, [gameState]
          cp 01
@@ -73,7 +74,9 @@ main::
 
       ; Inicializar el jugador
       ld bc, ENTITY_SIZE 
-      call configSprites 
+      call configSprites
+      call Cambiar_banco_fondo 
+      call Cargar_mapa
          .gameplay:
          ld de, entityArray
          call updateMove

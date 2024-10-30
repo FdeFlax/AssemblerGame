@@ -1,4 +1,4 @@
-; BETTERBULLETT.Z80
+; BESTBULLET.Z80
 ;
 ; Tile Source File.
 ;
@@ -24,13 +24,13 @@
 
 ; Start of tile array.
 TileLabel::
-DB $00,$00,$01,$01,$02,$03,$05,$06
-DB $05,$06,$05,$06,$05,$06,$05,$06
-DB $05,$06,$05,$06,$02,$03,$02,$03
-DB $02,$03,$02,$03,$02,$03,$01,$01
-DB $00,$00,$80,$80,$40,$C0,$A0,$60
-DB $A0,$60,$A0,$60,$A0,$60,$A0,$60
-DB $A0,$60,$A0,$60,$40,$C0,$40,$C0
-DB $40,$C0,$40,$C0,$40,$C0,$80,$80
+DB $00,$00,$7F,$7F,$7F,$7F,$7F,$7F
+DB $7F,$7F,$7F,$7D,$7D,$7F,$78,$7F
+DB $77,$78,$67,$58,$77,$78,$78,$7F
+DB $7D,$7F,$7F,$7D,$7F,$7F,$7F,$7F
+DB $00,$00,$FF,$FF,$FF,$FF,$FF,$FF
+DB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+DB $7F,$FF,$3F,$DF,$7F,$FF,$FF,$FF
+DB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 
-; End of BETTERBULLETT.Z80
+; End of BESTBULLET.Z80
