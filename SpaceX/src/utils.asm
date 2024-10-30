@@ -97,7 +97,7 @@ SECTION "Utils", ROM0
   Cargar_tiles::
     ld hl, $8000 ;; donde queremos empezar a escribir
     ld de, Nave ;; principio de nuestros tiles
-    ld bc, Nav_end - Nave ;;Contador
+    ld bc, Bullet_end - Nave ;;Contador
     .loop:
       ld a, [de] ;cargamos el valor al que apunta de en a
       ld [hl+], a ;;escribimos ese valor en la vram

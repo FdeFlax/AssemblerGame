@@ -1,5 +1,7 @@
 DEF BULLET_OAM_POS equ 30 * 4   ; Posición en la OAM para el disparo (cada entrada de sprite son 4 bytes)
-DEF BULLET_SPRITE_TILE equ $01 ; Identificador de tile para el disparo
+DEF BULLET_OAM_POS2 equ 31 * 4   ; Posición en la OAM para el disparo (cada entrada de sprite son 4 bytes)
+DEF BULLET_SPRITE_TILE01 equ $04 ; Identificador de tile para el disparo
+DEF BULLET_SPRITE_TILE02 equ $06 ; Identificador de tile para el disparo
 DEF BULLET_SPRITE_ATTR equ $00 ; Atributos del sprite del disparo
 DEF SCREEN_TOP_BOUND equ 0  
 SECTION "Disparo", ROM0 
@@ -30,7 +32,22 @@ fire_bullet:
     ld a, [bullet_posx]
     ld [hl], a              ; Posición X del disparo
     inc hl
-    ld a, BULLET_SPRITE_TILE
+    ld a, BULLET_SPRITE_TILE01
+    ld [hl], a              ; Tile del disparo
+    inc hl
+    ld a, BULLET_SPRITE_ATTR
+    ld [hl], a              ; Atributos del sprite
+
+    ; Configurar el sprite en la copia de la OAM
+    inc hl
+    ld a, [bullet_posy]
+    ld [hl], a              ; Posición Y del disparo
+    inc hl
+    ld a, [bullet_posx]
+    add 8
+    ld [hl], a              ; Posición X del disparo
+    inc hl
+    ld a, BULLET_SPRITE_TILE02
     ld [hl], a              ; Tile del disparo
     inc hl
     ld a, BULLET_SPRITE_ATTR
@@ -55,7 +72,12 @@ update_bullet:
     ld hl, copiaOAM + BULLET_OAM_POS
     ld a, [bullet_posy]
     ld [hl], a                ; Posición Y del disparo
-                   ; Posición X del disparo
+
+    ld hl, copiaOAM + BULLET_OAM_POS2
+    ld a, [bullet_posy]
+    ld [hl],a
+    
+
     ret
 
 .deactivate_bullet:
