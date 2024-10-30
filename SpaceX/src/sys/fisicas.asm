@@ -3,7 +3,7 @@ DEF SCREEN_BOTTOM_BOUND equ 144     ; Límite inferior (altura de la pantalla Ga
 DEF SCREEN_LEFT_BOUND equ 0      ; Límite izquierdo
 DEF SCREEN_RIGHT_BOUND equ 160   ; Límite derecho (resolución de la pantalla Game Boy)
 
-
+DEF POSY_NAVE equ 126
 
 SECTION "Fisicas", ROM0
 
@@ -14,12 +14,18 @@ SECTION "Fisicas", ROM0
 updatePos:
   ;Actualizar la poscion en X
     ld a, [entityArray + ENTITY_POSX]
-    ld [posicionXNave],a
+    ld [posicionXNave], a
     add b
+    cp SCREEN_LEFT_BOUND + 8
+    jp c, fueraLimites 
+    cp SCREEN_RIGHT_BOUND - 8
+    jp nc, fueraLimites
     ld [entityArray + ENTITY_POSX], a 
     call waitVBlank
     ret
 
+fueraLimites:
+    ret
     ;--------VER SI UN ENEMIGO HA TOCADO LA NAVE
 verificar_terminajuego:
     ld hl, terminajuego       
@@ -92,9 +98,19 @@ checkearposiciones:
         ld a, [hl]
         ld b, a
         ld a, [posicionXNave]
+        add 10
         cp b
         pop hl
-        jr nz, .continuacion
+        jr c, .continuacion
+
+        
+        ld a, b
+        add 16
+        ld b, a
+        ld a, [posicionXNave]
+        add 6
+        cp b
+        jr nc, .continuacion
 
         push hl
         call terminajuego1
@@ -109,11 +125,12 @@ checkearposiciones:
         pop bc                   ; Calcular posición ENTITY_POSX en la entidad
         ld a, [hl]
         ld b, a
-        ld a, 128
+        ld a, 115
         cp b
         pop hl
-        
-        jr nz, .continuacion
+
+        jr nc, .continuacion
+
         push hl
         call terminajuego2
         pop hl
