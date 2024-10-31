@@ -248,6 +248,11 @@ checkearHit:
 
 
         call .desactivarBala
+        push hl
+        push bc
+        call .desactivarEntidad
+        pop bc
+        pop hl
 
 ; -------------------------------------------------------------
 ; 
@@ -283,7 +288,29 @@ ret
     ld [copiaOAM + 30*4], a
     ld [copiaOAM + 31*4], a
 
-ret
+
+.desactivarEntidad:
+    ; Desactivar la entidad en entityArray
+    ld bc, ENTITY_COMPONENT
+    ld h, d
+    ld l, e
+    add hl, bc
+    ld a, 0
+    ld [hl], a                   
+    
+
+    ; Actualizar la posición en X
+   
+    
+
+
+
+    ret
+
+
+
+
+
 
 irEstadoInicio:
     ld a, 00
@@ -311,9 +338,10 @@ irEstadoInicio:
     .loop
         ld a, [de]                  
         cp 1                         
-        jp nz, .continuacion                  ; Si no está activa, continuar al siguiente
+        jp nz, .continuacion                ; Si no está activa, continuar al siguiente
         
         ; Actualizar la posición en X
+        push bc
         push hl
         ld bc, ENTITY_POSX
         ld h, d
@@ -322,7 +350,9 @@ irEstadoInicio:
         ld a, [hl]      
                      
         pop hl
+        pop bc
 
+        push bc
         push hl
         ld bc, ENTITY_VX
         ld h, d
@@ -330,13 +360,14 @@ irEstadoInicio:
         add hl, bc                   ; Calcular posición ENTITY_VX en la entidad
         add [hl]                     ; Sumar la velocidad en X
         pop hl
+        pop bc
 
         cp SCREEN_RIGHT_BOUND        
         jr nc, .reverse_direction_x  
 
         cp SCREEN_LEFT_BOUND        
         jr c, .reverse_direction_x  
-
+        push bc
         push hl
         ld bc, ENTITY_POSX
         ld h, d
@@ -344,8 +375,9 @@ irEstadoInicio:
         add hl, bc
         ld [hl], a                   ; Guardar la posición X actualizada en ENTITY_POSX
         pop hl
-
+        pop bc
         ; Actualizar la posición en Y
+        push bc
         push hl
         ld bc, ENTITY_POSY
         ld h, d
@@ -353,7 +385,9 @@ irEstadoInicio:
         add hl, bc                
         ld a, [hl]                   
         pop hl
+        pop bc
 
+        push bc
         push hl
         ld bc, ENTITY_VY
         ld h, d
@@ -361,14 +395,14 @@ irEstadoInicio:
         add hl, bc                  
         add [hl]                   
         pop hl
-
+        pop bc
         ; Comprobar si toca el borde inferior
   
         
 
         cp SCREEN_TOP_BOUND          
         jr c, .reverse_direction_y  
-
+        push bc
         push hl
         ld bc, ENTITY_POSY
         ld h, d
@@ -376,7 +410,7 @@ irEstadoInicio:
         add hl, bc
         ld [hl], a                  
         pop hl
-
+        pop bc
     .continuacion:
         push bc
         push hl
@@ -393,8 +427,9 @@ irEstadoInicio:
         jp nz, .loop                   ; Si se procesaron todas las entidades, terminar
 
         ret
-
+   
     .reverse_direction_x:
+        push bc
         push hl
         ld bc, ENTITY_VX
         ld h, d
@@ -405,7 +440,9 @@ irEstadoInicio:
         inc a
         ld [hl], a                    
         pop hl
+        pop bc
 
+        push bc
         push hl
         ld bc, ENTITY_POSY
         ld h, d
@@ -415,10 +452,12 @@ irEstadoInicio:
         add 10                        ; Reducir Y en 10
         ld [hl], a                   
         pop hl
+        pop bc
 
         jp .continuacion
 
 .reverse_direction_y:
+    push bc
     push hl
     ld bc, ENTITY_VY
     ld h, d
@@ -439,7 +478,7 @@ irEstadoInicio:
     sub 10                        ; Reducir Y en 10
     ld [hl], a                   
     pop hl
-
+    pop bc
     jp .continuacion
 
 
@@ -456,7 +495,7 @@ updateOAM::
             .loop
                 ld a, [de]
                 cp 1
-                jr nz, .continuar
+                jr nz, .borrarEntidad
 
                 push bc
 
@@ -504,9 +543,11 @@ updateOAM::
                 inc hl
 
 
-            pop bc                     ; Guardar la posición X en la OAM
+                pop bc   
                 ; Fin de la actualización de la OAM
             .continuar
+                
+
                 dec c
                 jr z, .fin
             
@@ -524,6 +565,55 @@ updateOAM::
                 ret
       .fin:
       ret
+      .borrarEntidad:
+                push bc
+                push hl
+                ld bc, ENTITY_POSY
+                ld h, d
+                ld l, e
+                add hl, bc
+                ld a, 0
+                pop hl
+                ld [hl+], a     
+                
+                push hl
+                ld bc, ENTITY_POSX
+                ld h, d
+                ld l, e
+                add hl, bc
+                ld a, 0
+                pop hl
+                ld [hl+],a   
+
+                inc hl
+                inc hl
+
+                push hl
+                ld bc, ENTITY_POSY
+                ld h, d
+                ld l, e
+                add hl, bc
+                ld a, 0
+                pop hl
+                ld [hl+], a
+    
+                push hl
+                ld bc, ENTITY_POSX
+                ld h, d
+                ld l, e
+                add hl, bc
+                ld a, 0
+                pop hl
+                add 8  
+                ld [hl+],a    
+                
+                inc hl
+                inc hl
+
+
+                pop bc
+            jr .continuar
+        ret
 
 
 ; ANTIGUO UPDATE OAM
