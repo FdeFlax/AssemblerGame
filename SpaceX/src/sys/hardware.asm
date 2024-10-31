@@ -67,7 +67,8 @@ ret
 pulsarparainiciarjuego ::
     ldh a, [flancoAscendente]   
     and %00000001               
-    ret z                      
+    ret z
+    call playstartSound                      
     ld a, 01                      
     ld [gameState], a
     

@@ -37,20 +37,20 @@ playGalagaLaser::
 
     ret
 
-playEnemyDestruction::
+playstartSound::
     ;; Configurar longitud de onda en el canal 1 (Square Wave)
     ld a, %10000000         ; Longitud de onda al 50%
     ldh [$FF11], a
 
     ;; Configuración de envolvente de volumen
-    ld a, %11100010         ; Volumen inicial alto, caída rápida
+    ld a, %11100000         ; Volumen inicial alto, caída rápida
     ldh [$FF12], a
 
     ;; Ajuste de frecuencia para una tercera mayor moderada
-    ld a, %10100000         ; Parte baja de la frecuencia (un poco más alta)
+    ld a, %11101001         ; Parte baja de la frecuencia (un poco más alta)
     ldh [$FF13], a
 
-    ld a, %11000110         ; Parte alta de la frecuencia y reinicio
+    ld a, %11100110         ; Parte alta de la frecuencia y reinicio
     ldh [$FF14], a
 
     ret
@@ -75,6 +75,9 @@ playExplosion::
 
 
     ret
+
+
+
 
 
 
