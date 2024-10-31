@@ -25,7 +25,7 @@
     DEF ENEMY3_VY         equ $00
 
     ; Enemy 4 Constants
-    DEF ENEMY4_SPRITE_ID1 equ $AA
+    DEF ENEMY4_SPRITE_ID1 equ $A8
     DEF ENEMY4_SPRITE_ID2 equ $AA
     DEF ENEMY4_POSX       equ $00
     DEF ENEMY4_POSY       equ $30
@@ -345,7 +345,8 @@ SECTION "Entity data", ROM0
                 ld a, [hl]
                 pop hl
                 ld [hl+], a
-                ld [hl+],a
+                ld a, $00
+                ld [hl+], a
 
                 push hl
                 ld bc, ENTITY_POSY
@@ -469,7 +470,7 @@ SECTION "Entity array", WRAM0
     
       ; Definir tamaño de cada entidad y el tamaño total del array de entidades
     DEF ENTITY_SIZE     equ 7      ; Tamaño de cada entidad (8 bytes, con los atributos)
-    DEF MAX_ENTITIES    equ 15   ; Número máximo de entidades
+    DEF MAX_ENTITIES    equ  15  ; Número máximo de entidades
     DEF ENTITY_ARRAY_SIZE equ ENTITY_SIZE * MAX_ENTITIES  ; Tamaño total del array
 
     RSRESET
