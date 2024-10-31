@@ -62,20 +62,19 @@ playExplosion::
     ldh [$FF11], a
 
     ;; Configuración de envolvente de volumen para explosión
-    ld a, %11100000         ; Volumen inicial alto, caída rápida
+    ld a, %11100001         ; Volumen inicial alto
     ldh [$FF12], a
 
     ;; Configuración de frecuencia para un sonido explosivo
-    ld a, %10111111         ; Frecuencia inicial alta
+    ld a, %1100100         ; Frecuencia inicial alta
     ldh [$FF13], a
 
-    ld a, %11000111         ; Parte alta de la frecuencia y reinicio
+    ld a, %11000111         ; Reinicio del canal
     ldh [$FF14], a
 
-    ;; Cortar el sonido de la explosión después de un breve momento
-    ld a, $01               ; Apagar el sonido en el canal 1
-    ldh [$FF14], a
+
 
     ret
+
 
 

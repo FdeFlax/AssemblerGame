@@ -282,7 +282,7 @@ ret
 
 .desactivarBala:
 
-    call playEnemyDestruction
+    call playExplosion
     ld a, 0
     call waitVBlank
     ld [bullet_active], a
