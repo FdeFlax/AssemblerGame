@@ -194,6 +194,7 @@ checkearposiciones:
 
             ld a, [ENEMY_TRACKER]
             dec a
+            dec a
             ld [ENEMY_TRACKER], a
             pop af  
 
