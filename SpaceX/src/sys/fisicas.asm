@@ -31,11 +31,13 @@ verificar_terminajuego:
 
     ld a, [ENEMY_TRACKER]
     cp 0
-    jp z, irEstadoInicio
+    jp z, irEstadoFinal
 
     ld a, [LIFE_TRACKER]
     cp 0
-    jp z, irEstadoInicio
+    jp z, irEstadoFinal
+
+    
 
     ld hl, terminajuego       
     ld a, [hl]                 
@@ -178,23 +180,24 @@ checkearposiciones:
         .quitaVida
 
             push af
-                ld a, [LIFE_TRACKER]
-                dec a
-                ld [LIFE_TRACKER], a
-                ; Desactivar la entidad en entityArray
-                ld bc, ENTITY_COMPONENT
-                ld h, d
-                ld l, e
-                add hl, bc
-                ld a, 0
-                ld [hl], a                   
+            call playstartSound                      
+            ld a, [LIFE_TRACKER]
+            dec a
+            ld [LIFE_TRACKER], a
+            ; Desactivar la entidad en entityArray
+            ld bc, ENTITY_COMPONENT
+            ld h, d
+            ld l, e
+            add hl, bc
+            ld a, 0
+            ld [hl], a                   
 
-                ld a, [ENEMY_TRACKER]
-                dec a
-                ld [ENEMY_TRACKER], a
-                pop af  
+            ld a, [ENEMY_TRACKER]
+            dec a
+            ld [ENEMY_TRACKER], a
+            pop af  
 
-                ret  
+            ret  
     
 
 checkearHit:
@@ -365,6 +368,15 @@ irEstadoInicio:
     call EstadoInicio
     ret
 
+irEstadoFinal:
+    ld a, 00
+    ld [gameState],a
+    call Apagar_pantalla
+    call Borrar_pantalla
+    call Encender_pantalla
+    call borrarOAM
+    call EstadoFinal
+    ret
 
 ;;-------------ACTUALIZAR POSICIONES
  updatePosEnemigos::

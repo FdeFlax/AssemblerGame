@@ -304,6 +304,9 @@ SECTION "Utils", ROM0
   .fin
 
 
+
+
+
 SECTION "Copia OAM", WRAM0, ALIGN[8]
 
   copiaOAM::

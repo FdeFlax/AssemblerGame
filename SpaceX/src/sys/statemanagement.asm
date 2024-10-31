@@ -16,9 +16,15 @@ escribeTexto:
     ret
 
 
-escribeDialogo:
+escribeDialogoInicio:
     call waitVBlank
     ld de, $98E0              ; Dirección de la VRAM para diálogos
+    call escribeTexto         ; Llamar a `escribeTexto` para copiar el texto
+    ret
+
+escribeDialogoFinal:
+    call waitVBlank
+    ld de, $98E6              ; Dirección de la VRAM para diálogos
     call escribeTexto         ; Llamar a `escribeTexto` para copiar el texto
     ret
 

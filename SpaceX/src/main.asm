@@ -44,11 +44,15 @@ main::
       push hl
       push de
       ld hl, linea
-      call escribeDialogo
+      call escribeDialogoInicio
       pop de
       pop hl
+      
+      ld a, 00
+      ld [gameState], a
 
       .loop:
+         
          call Cambiar_banco_fondo_1
          call pulsarparainiciarjuego    
          ld a, [gameState]
@@ -58,13 +62,41 @@ main::
       jp .loop 
    ret
 
+   EstadoFinal:
+      push hl
+      push de
+
+      ld a, [LIFE_TRACKER]      ; Cargar LIFE_TRACKER
+      cp 0                      ; Comparar con 0
+      ld hl, linea3             ; Apuntar a linea3 por defecto
+      jr nz, .continuar         ; Si no es 0, ir a escribir la línea
+
+      ld hl, linea4             ; Si es 0, apuntar a linea4
+
+      .continuar:
+         call escribeDialogoFinal  ; Escribir la línea correcta
+         pop de
+         pop hl
+
+      .loop:
+            call Cambiar_banco_fondo_1
+            call pulsarparainiciarjuego    
+            ld a, [gameState]
+            cp 01
+            jr z, EstadoInicio         
+                        
+            jp .loop 
+
+      ret
+
+
    EstadoJuego:
       ld a, 30          
       ld [posicionXBase], a 
       push hl
       push de
       ld hl, linea2
-      call escribeDialogo
+      call escribeDialogoInicio
       pop de
       pop hl
       ld de, playerData      ;;datos de los sprites del jugador en manager.asm

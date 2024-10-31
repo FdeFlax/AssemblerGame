@@ -48,3 +48,9 @@ DB "PULSA A PARA EMPEZAR", 0
 
 linea2::
 DB "                    ", 0
+
+linea3::
+DB "VICTORIA", 0
+
+linea4::
+DB "GAME OVER", 0
