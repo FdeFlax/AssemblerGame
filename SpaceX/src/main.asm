@@ -28,6 +28,7 @@ Setup:
    call Cargar_tile_enemigos
    call Cargar_letras
    call Cargar_Fondos
+   call initSound
 ret
 
 

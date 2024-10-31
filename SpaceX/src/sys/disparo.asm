@@ -10,6 +10,7 @@ fire_bullet:
     ld a, [bullet_active]   ; Comprobar si el disparo ya está activo
     cp 1
     ret z                   ; Salir si ya hay un disparo activo
+    call playGalagaLaser    ;;Reproducir el sonido del disparo
 
     ; Activar disparo
     ld a, 1
