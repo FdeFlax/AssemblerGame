@@ -400,8 +400,11 @@ SECTION "Entity data", ROM0
 
     bucleenemigos:
         ld c, MAX_ENTITIES   ; Número máximo de entidades a generar
-        ld b, 3              ; Inicializar `a` para alternar entre los tres tipos (0, 1, 2)
-
+        ld b, 3 
+        push af 
+        ld a, 0
+        ld [ENEMY_TRACKER], a          ; Inicializar `a` para alternar entre los tres tipos (0, 1, 2)
+        pop af
        ; Comprobar el valor de `b` para decidir qué enemigo crear
     .loop
             ld a, b
@@ -444,6 +447,12 @@ SECTION "Entity data", ROM0
 
         .crear:
             call initEnemy       ; Inicializar la entidad
+            push af
+            ld a, [ENEMY_TRACKER]
+            inc a               
+            inc a                   ; Porfavor no hagas preguntas
+            ld [ENEMY_TRACKER], a
+            pop af
             jp .continuar        ; Continuar con el siguiente enemigo
 
         .fin:
@@ -496,4 +505,6 @@ SECTION "Entity OAM Data", WRAM0
 ENTITY_OAM_ADDRESS: 
     DS 2  ; Espacio para la dirección de OAM (2 bytes)
 
+SECTION "Enemigos Info", WRAM0
+    ENEMY_TRACKER: DS 1
 

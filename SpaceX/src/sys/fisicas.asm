@@ -28,6 +28,12 @@ fueraLimites:
     ret
     ;--------VER SI UN ENEMIGO HA TOCADO LA NAVE
 verificar_terminajuego:
+
+    ld a, [ENEMY_TRACKER]
+    cp 0
+    jp z, irEstadoInicio
+
+
     ld hl, terminajuego       
     ld a, [hl]                 
     cp 0                 
@@ -290,6 +296,7 @@ ret
     ld [copiaOAM + 31*4], a
 
 
+
 .desactivarEntidad:
     ; Desactivar la entidad en entityArray
     ld bc, ENTITY_COMPONENT
@@ -299,6 +306,9 @@ ret
     ld a, 0
     ld [hl], a                   
     
+    ld a, [ENEMY_TRACKER]
+    dec a
+    ld [ENEMY_TRACKER], a
 
     ; Actualizar la posición en X
    
