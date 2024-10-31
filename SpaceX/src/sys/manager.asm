@@ -232,6 +232,10 @@ SECTION "Entity data", ROM0
     ; push de
     ;     call buscar_hueco
     ; pop de
+
+    ld a, 3
+    ld [LIFE_TRACKER], a
+
     ld bc, ENTITY_SIZE
     ld a, 01
     ld [hl], a
@@ -505,6 +509,7 @@ SECTION "Entity OAM Data", WRAM0
 ENTITY_OAM_ADDRESS: 
     DS 2  ; Espacio para la dirección de OAM (2 bytes)
 
-SECTION "Enemigos Info", WRAM0
+SECTION "Trackers", WRAM0
     ENEMY_TRACKER: DS 1
+    LIFE_TRACKER: DS 1
 

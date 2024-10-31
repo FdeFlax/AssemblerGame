@@ -33,6 +33,9 @@ verificar_terminajuego:
     cp 0
     jp z, irEstadoInicio
 
+    ld a, [LIFE_TRACKER]
+    cp 0
+    jp z, irEstadoInicio
 
     ld hl, terminajuego       
     ld a, [hl]                 
@@ -117,9 +120,9 @@ checkearposiciones:
         cp b
         jr nc, .continuacion
 
-        push hl
-        call terminajuego1
-        pop hl
+        ; push hl
+        ; call terminajuego1
+        ; pop hl
         
         push hl
         push bc
@@ -142,9 +145,17 @@ checkearposiciones:
         cp b
         jr nc, .continuacion
 
+        ; push hl
+        ; call terminajuego2
+        ; pop hl
+
+        
         push hl
-        call terminajuego2
+        push bc
+        call .quitaVida
+        pop bc
         pop hl
+
 
         .continuacion
         push bc
@@ -162,7 +173,28 @@ checkearposiciones:
         jp nz, .loop                   ; Si se procesaron todas las entidades, terminar
 
         ret
-        
+
+
+        .quitaVida
+
+            push af
+                ld a, [LIFE_TRACKER]
+                dec a
+                ld [LIFE_TRACKER], a
+                ; Desactivar la entidad en entityArray
+                ld bc, ENTITY_COMPONENT
+                ld h, d
+                ld l, e
+                add hl, bc
+                ld a, 0
+                ld [hl], a                   
+
+                ld a, [ENEMY_TRACKER]
+                dec a
+                ld [ENEMY_TRACKER], a
+                pop af  
+
+                ret  
     
 
 checkearHit:
