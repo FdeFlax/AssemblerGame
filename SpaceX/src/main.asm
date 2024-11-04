@@ -53,6 +53,7 @@ main::
       
       ld a, 00
       ld [gameState], a
+      call waitVBlank
 
       .loop:
          
@@ -79,9 +80,8 @@ main::
          call Cargar_mapa
          pop de
          pop hl
-
       .loop:
-            call pulsarparainiciarjuego    
+            call pulsarparainiciarjuego
             ld a, [gameState]
             cp 01
             jr z, EstadoInicio         
