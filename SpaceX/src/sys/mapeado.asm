@@ -43,7 +43,7 @@ SECTION "Mapeado", ROM0
       push de
       ld l, a          ;; Guarda el resultado de ID * 4 en L
       ld h, 0          ;; Establece H en 0 para usar HL como puntero de índice
-      ld de, inicioSheetIndex  ;; Carga la dirección de inicio de los metatiles en DE
+      ld de, definitiveTilesIndex  ;; Carga la dirección de inicio de los metatiles en DE
       add hl, de       ;; Suma el inicio de los metatiles al offset calculado
       pop de
       ;;Ahora hl apunta al metatile (4 tiles) que queremos copiar

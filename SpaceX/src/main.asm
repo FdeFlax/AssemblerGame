@@ -27,8 +27,8 @@ Setup:
    call Cargar_tiles    ;;Cargamos los tiles aprovechando la pantalla apagada
    call Cargar_tile_enemigos
    call Cargar_letras
-   ld de, inicioSheet
-   ld bc, finInicioTiles - inicioSheet
+   ld de, definitiveTiles
+   ld bc, finDefinitveTiles - definitiveTiles
    call Cargar_Fondos
    call initSound
 ret
@@ -70,18 +70,17 @@ main::
 
       ld a, [LIFE_TRACKER]      ; Cargar LIFE_TRACKER
       cp 0                      ; Comparar con 0
-      ld hl, linea3             ; Apuntar a linea3 por defecto
+      ld hl, VIctoryMap             ; Apuntar a linea3 por defecto
       jr nz, .continuar         ; Si no es 0, ir a escribir la línea
 
-      ld hl, linea4             ; Si es 0, apuntar a linea4
+      ld hl, loseMap             ; Si es 0, apuntar a linea4
 
       .continuar:
-         call escribeDialogoFinal  ; Escribir la línea correcta
+         call Cargar_mapa
          pop de
          pop hl
 
       .loop:
-            call Cambiar_banco_fondo_1
             call pulsarparainiciarjuego    
             ld a, [gameState]
             cp 01

@@ -3,14 +3,14 @@
 ; Include File.
 ;
 ; Info:
-;   Section              : inicio Sheet
+;   Section              : Definitive tiles
 ;   Bank                 : 0
 ;   Form                 : All tiles as one unit.
 ;   Format               : Gameboy 4 color.
 ;   Compression          : None.
 ;   Counter              : None.
 ;   Tile size            : 16 x 16
-;   Tiles                : 0 to 21
+;   Tiles                : 0 to 29
 ;
 ;   Palette colors       : None.
 ;   SGB Palette          : None.
@@ -24,13 +24,13 @@
 
 
 ; Bank of tiles.
-inicioSheetBank EQU 0
+definitiveTilesBank EQU 0
 
 ; Metatile index
- GLOBAL inicioSheetIndex
-inicioSheetIndexLen EQU 22
+ GLOBAL definitiveTilesIndex
+definitiveTilesIndexLen EQU 30
 
 ; Start of tile array.
- GLOBAL inicioSheet
+ GLOBAL definitiveTiles
 
 ; End of METATILES.INC
