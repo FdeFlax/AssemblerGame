@@ -111,6 +111,7 @@ main::
       call initEntity        ;; Iniciamos la estructura donde esta nuestro jugador
       call bucleenemigos
 
+      
       ; Inicializar el jugador
       ld bc, ENTITY_SIZE 
       call configSprites
@@ -129,13 +130,13 @@ main::
          call updateOAM
          call waitVBlank
          
-           ; Comprobar si el nivel ha terminado
+         ; Comprobar si el nivel ha terminado y si no ha terminado pasa de nivel
          ld a, [ENEMY_TRACKER]
          cp 0
-         jp nz, .gameplay  ; Sigue en el bucle mientras haya enemigos
+         jp nz, .gameplay  
 
-         ; ld a, [currentLevel]  ; Cargar el valor de currentLevel en A
-         inc a                 ; Incrementar el valor
+         
+         inc a                
          ld [currentLevel], a
 
    ret

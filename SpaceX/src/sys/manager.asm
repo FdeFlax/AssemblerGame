@@ -168,7 +168,7 @@ SECTION "Entity data", ROM0
     push bc
     ld bc, ENTITY_SPRITE_2
     add hl, bc
-    ld [hl], a    ; Guardar en la entidad
+    ld [hl], a  
     pop bc
     pop hl
 
@@ -178,7 +178,7 @@ SECTION "Entity data", ROM0
     push bc
     ld bc, ENTITY_POSY
     add hl, bc
-    ld [hl], a    ; Guardar en la entidad
+    ld [hl], a    
     pop bc
     pop hl
 
@@ -189,7 +189,7 @@ SECTION "Entity data", ROM0
     push bc
     ld bc, ENTITY_POSX
     add hl, bc
-    ld [hl], a                     ; Guardar en la entidad
+    ld [hl], a                     
     pop bc
     pop hl
 
@@ -205,17 +205,17 @@ SECTION "Entity data", ROM0
     push bc
     ld bc, ENTITY_VY
     add hl, bc
-    ld [hl], a    ; Guardar en la entidad
+    ld [hl], a   
     pop bc
     pop hl
 
     inc de
-    ld a, [de]
+    call asignarVelocidadPorNivel ; Llamar al método para obtener la velocidad
     push hl
     push bc
     ld bc, ENTITY_VX
     add hl, bc
-    ld [hl], a    ; Guardar en la entidad
+    ld [hl], a                
     pop bc
     pop hl
 
@@ -463,6 +463,26 @@ SECTION "Entity data", ROM0
 
         .fin:
             ret
+asignarVelocidadPorNivel:
+    ld a, [currentLevel]       
+    cp 0
+    jr z, .nivel1               
+    cp 1
+    jr z, .nivel2              
+    cp 2
+    jr z, .nivel3               
+
+.nivel1:
+    ld a, 1                    
+    ret
+
+.nivel2:
+    ld a, 2                     
+    ret
+
+.nivel3:
+    ld a, 3                     
+    ret
 
 loadEnemyData:
     ld a, [currentLevel]
@@ -475,16 +495,16 @@ loadEnemyData:
 
 
 .level1:
-    ld a, 6                    ; Número de enemigos en el nivel 1
+    ld a, 15                   
     ld [currentEnemyCount], a
     ret
 
 .level2:
-    ld a, 10                   ; Número de enemigos en el nivel 2
+    ld a, 10                  
     ld [currentEnemyCount], a
     ret
 .level3:
-    ld a, 15                    ; Número de enemigos en el nivel 2
+    ld a, 9                 
     ld [currentEnemyCount], a
     ret
 
