@@ -96,7 +96,6 @@ main::
 
 
    EstadoJuego:
-
       ld a, 30          
       ld [posicionXBase], a 
       push hl
@@ -108,6 +107,7 @@ main::
       ld a, [currentLevel]
       ld [currentEnemyCount], a
       call loadEnemyData
+
       ld de, playerData      ;;datos de los sprites del jugador en manager.asm
       call initEntity        ;; Iniciamos la estructura donde esta nuestro jugador
       call bucleenemigos
@@ -117,8 +117,6 @@ main::
       ld bc, ENTITY_SIZE 
       call configSprites
       call initBullet
-
-
       ld hl, mapaTest
       call Cargar_mapa
          .gameplay:
@@ -130,7 +128,6 @@ main::
          call verificar_terminajuego
          call disparar
          call update_bullet
-         
          call updateOAM
          call waitVBlank
          

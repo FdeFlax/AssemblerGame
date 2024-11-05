@@ -2,10 +2,6 @@ DEF SCREEN_TOP_BOUND equ 0         ; Límite superior
 DEF SCREEN_BOTTOM_BOUND equ 144     ; Límite inferior (altura de la pantalla Game Boy)
 DEF SCREEN_LEFT_BOUND equ 0      ; Límite izquierdo
 DEF SCREEN_RIGHT_BOUND equ 160   ; Límite derecho (resolución de la pantalla Game Boy)
-DEF TILE_MAP_BASE equ $9800       ; Base de la Tile Map en VRAM (ajústala según tu configuración)
-DEF VIDA_POS_X equ 2              ; Posición X del contador de vidas en tiles
-DEF VIDA_POS_Y equ 1              ; Posición Y del contador de vidas en tiles
-DEF VIDA_VRAM_ADDR equ TILE_MAP_BASE + VIDA_POS_Y * 32 + VIDA_POS_X
 
 DEF POSY_NAVE equ 126
 
@@ -206,11 +202,6 @@ checkearposiciones:
 
             ret  
 
- actualizarVidasEnPantalla:
-    ld a, [LIFE_TRACKER]         ; Cargar el número actual de vidas
-    add $30                      ; Convertir a código ASCII (números empiezan en $30)
-    ld [VIDA_VRAM_ADDR], a       ; Almacenar en la posición de VRAM especificada
-    ret   
 
 checkearHit:
 
