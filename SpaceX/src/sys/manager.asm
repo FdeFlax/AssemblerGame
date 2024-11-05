@@ -504,7 +504,7 @@ loadEnemyData:
     ld [currentEnemyCount], a
     ret
 .level3:
-    ld a, 9                 
+    ld a, 14                 
     ld [currentEnemyCount], a
     ret
 
