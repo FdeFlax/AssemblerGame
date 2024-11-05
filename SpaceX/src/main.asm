@@ -117,7 +117,7 @@ main::
       ld bc, ENTITY_SIZE 
       call configSprites
       call initBullet
-            call initVidaOAM
+
 
       ld hl, mapaTest
       call Cargar_mapa
@@ -130,6 +130,7 @@ main::
          call verificar_terminajuego
          call disparar
          call update_bullet
+         
          call updateOAM
          call waitVBlank
          

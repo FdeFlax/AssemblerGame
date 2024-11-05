@@ -2,20 +2,10 @@ DEF SCREEN_TOP_BOUND equ 0         ; Límite superior
 DEF SCREEN_BOTTOM_BOUND equ 144     ; Límite inferior (altura de la pantalla Game Boy)
 DEF SCREEN_LEFT_BOUND equ 0      ; Límite izquierdo
 DEF SCREEN_RIGHT_BOUND equ 160   ; Límite derecho (resolución de la pantalla Game Boy)
-
-
-    DEF VIDA_OAM_POS equ 32 * 4         ; Posición en la OAM para el icono de vida
-    DEF VIDA_OAM_POS2 equ 33 * 4         ; Posición en la OAM para el icono de vida
-    DEF VIDA_TILE_3 equ $A4          ; Tile cuando hay 3 vidas
-    DEF Corazon equ $AE       ; Tile corazon
-    DEF VIDA_TILE_2 equ $A8            ; Tile cuando hay 2 vidas
-    DEF VIDA_TILE_1 equ $AC           ; Tile cuando hay 1 vida
-    DEF VIDA_SPRITE_ATTR equ $00        ; Atributos del sprite de vida
-    DEF VIDA_POS_X equ $10              ; Posición X para el icono de vida
-    DEF VIDA_POS_Y equ $80              ; Posición Y para el icono de vida
-      DEF COR_POS_X equ $10              ; Posición X para el icono de vida
-    DEF COR_POS_Y equ $80              ; Posición Y para el icono de vida
-
+DEF TILE_MAP_BASE equ $9800       ; Base de la Tile Map en VRAM (ajústala según tu configuración)
+DEF VIDA_POS_X equ 2              ; Posición X del contador de vidas en tiles
+DEF VIDA_POS_Y equ 1              ; Posición Y del contador de vidas en tiles
+DEF VIDA_VRAM_ADDR equ TILE_MAP_BASE + VIDA_POS_Y * 32 + VIDA_POS_X
 
 DEF POSY_NAVE equ 126
 
@@ -56,42 +46,43 @@ verificar_terminajuego:
     ret
 
 verificar_proximo_nivel:
+    ; Incrementar el nivel actual
     ld a, [currentLevel]
     inc a
     ld [currentLevel], a
+    ; Verificar si alcanzamos el total de niveles
     cp TOTAL_NIVELES
     jp z, irEstadoFinal             ; Si alcanzamos el último nivel, ir al EstadoFinal
 
     ; Preparar el siguiente nivel
-    call borrarOAM                  
-    call loadEnemyData             
-    call EstadoJuego                
-    ret                     
+    call borrarOAM                  ; Borrar la OAM antes de iniciar el nuevo nivel
+    call loadEnemyData              ; Cargar la configuración de enemigos del nuevo nivel
+    call EstadoJuego                ; Reiniciar en EstadoJuego
+    ret                     ; Retornar
 
 empiezajuego1:
-    ld hl, terminajuego    
-    ld [hl], 1          
-    ret                    
+    ld hl, terminajuego    ; Cargar la dirección de terminajuego en HL
+    ld [hl], 1          ; Poner el primer byte a 0x01
+    ret                    ; Retornar
 empiezajuego2:
     ld hl, terminajuego    ; Cargar la dirección de terminajuego en HL
-    inc hl                 
+    inc hl                 ; Avanzar a la segunda parte (segundo byte)
     ld [hl], 1          ; Poner el segundo byte a 0x01
-    ret                    
+    ret                    ; Retornar
 
 terminajuego1:
-    ld hl, terminajuego   
+    ld hl, terminajuego    ; Cargar la dirección de terminajuego en HL
     ld [hl], 0             ; Poner el primer byte a 0
     ret 
 
 terminajuego2:
-    ld hl, terminajuego    
-    inc hl                 
+    ld hl, terminajuego    ; Cargar la dirección de terminajuego en HL
+    inc hl                 ; Avanzar a la segunda parte (segundo byte)
     ld [hl], 0             ; Poner el segundo byte a 0
     ret 
 checkearposiciones:
     
-        ld a, [currentEnemyCount]
-        ld c, a                  
+        ld c, MAX_ENTITIES                    
         ld de, entityArray   
         ld a, [entityArray + ENTITY_POSX]
         ld [posicionXNave],a  
@@ -192,15 +183,13 @@ checkearposiciones:
         ret
 
 
-        .quitaVida:
+        .quitaVida
+
             push af
             call playstartSound                      
             ld a, [LIFE_TRACKER]
             dec a
             ld [LIFE_TRACKER], a
-            push hl
-            call updateVidaOAM
-            pop hl
             ; Desactivar la entidad en entityArray
             ld bc, ENTITY_COMPONENT
             ld h, d
@@ -211,69 +200,17 @@ checkearposiciones:
 
             ld a, [ENEMY_TRACKER]
             dec a
+            dec a
             ld [ENEMY_TRACKER], a
-            pop af   
+            pop af  
 
             ret  
-initVidaOAM:
-    ld hl, copiaOAM + VIDA_OAM_POS
-    
-    ld a, VIDA_POS_Y
-    ld [hl], a
-    inc hl
-    ld a, VIDA_POS_X + 8
-    ld [hl], a
-    inc hl
-    ld a, Corazon                   ; Cargar el tile de Corazon (siempre fijo)
-    ld [hl], a
-    inc hl
-    ld a, VIDA_SPRITE_ATTR
-    ld [hl], a
 
-    inc hl
-    ld a, VIDA_POS_Y 
-    ld [hl], a
-    inc hl
-    ld a, VIDA_POS_X 
-    ld [hl], a
-    inc hl
-    ld a, VIDA_TILE_3               ; Comienza con el tile de 3 vidas
-    ld [hl], a
-    inc hl
-    ld a, VIDA_SPRITE_ATTR
-    ld [hl], a
-    ret
-
-updateVidaOAM:
-    ld a, [LIFE_TRACKER]
-    ld hl, copiaOAM + VIDA_OAM_POS + 6  ; Dirección de la parte inferior en la OAM
-
-    cp 3
-    jr z, .tres_vidas
-    cp 2
-    jr z, .dos_vidas
-    cp 1
-    jr z, .una_vida
-    jp .sin_vidas
-
-.tres_vidas:
-    ld a, VIDA_TILE_3
-    jr .actualizar_tile
-.dos_vidas:
-    ld a, VIDA_TILE_2
-    jr .actualizar_tile
-.una_vida:
-    ld a, VIDA_TILE_1
-    jr .actualizar_tile
-
-.actualizar_tile:
-    ld [hl], a                        ;
-    ret
-
-.sin_vidas:
-    call irEstadoFinal
-    ret
-
+ actualizarVidasEnPantalla:
+    ld a, [LIFE_TRACKER]         ; Cargar el número actual de vidas
+    add $30                      ; Convertir a código ASCII (números empiezan en $30)
+    ld [VIDA_VRAM_ADDR], a       ; Almacenar en la posición de VRAM especificada
+    ret   
 
 checkearHit:
 
@@ -288,8 +225,7 @@ checkearHit:
     jp z, fueraLimites
 
 
-    ld a, [currentEnemyCount]
-    ld c, a                 
+    ld c, MAX_ENTITIES                    
     ld de, entityArray   
         
     push hl

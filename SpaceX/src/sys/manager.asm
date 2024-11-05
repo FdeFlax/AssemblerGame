@@ -473,7 +473,7 @@ asignarVelocidadPorNivel:
     jr z, .nivel3               
 
 .nivel1:
-    ld a, 1                    
+    ld a, 2                  
     ret
 
 .nivel2:
@@ -495,7 +495,7 @@ loadEnemyData:
 
 
 .level1:
-    ld a, 15                   
+    ld a, 3                  
     ld [currentEnemyCount], a
     ret
 
