@@ -25,8 +25,8 @@
     DEF ENEMY3_VY         equ $00
 
     ; Enemy 4 Constants
-    DEF ENEMY4_SPRITE_ID1 equ $A8
-    DEF ENEMY4_SPRITE_ID2 equ $AA
+    DEF ENEMY4_SPRITE_ID1 equ $A0
+    DEF ENEMY4_SPRITE_ID2 equ $A2
     DEF ENEMY4_POSX       equ $00
     DEF ENEMY4_POSY       equ $30
     DEF ENEMY4_VX         equ $01
