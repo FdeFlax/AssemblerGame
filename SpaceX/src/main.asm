@@ -43,6 +43,9 @@ main::
    call borrarOAM         ;;Borramos el contenido de la OAM (en la copia)
 
    EstadoInicio:
+      ld a, 0
+      ld [currentLevel], a
+      ld [currentEnemyCount], a
       push hl
       push de
       call Cambiar_banco_fondo 
@@ -100,9 +103,12 @@ main::
       call escribeDialogoInicio
       pop de
       pop hl
+      ld a, [currentLevel]
+      ld [currentEnemyCount], a
+      call loadEnemyData
+
       ld de, playerData      ;;datos de los sprites del jugador en manager.asm
       call initEntity        ;; Iniciamos la estructura donde esta nuestro jugador
-
       call bucleenemigos
 
       ; Inicializar el jugador
@@ -122,7 +128,16 @@ main::
          call update_bullet
          call updateOAM
          call waitVBlank
-         jp .gameplay
+         
+           ; Comprobar si el nivel ha terminado
+         ld a, [ENEMY_TRACKER]
+         cp 0
+         jp nz, .gameplay  ; Sigue en el bucle mientras haya enemigos
+
+         ; ld a, [currentLevel]  ; Cargar el valor de currentLevel en A
+         inc a                 ; Incrementar el valor
+         ld [currentLevel], a
+
    ret
 
 

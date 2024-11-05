@@ -313,7 +313,8 @@ SECTION "Entity data", ROM0
 
         ld hl, copiaOAM
         ld b, 0
-        ld c, MAX_ENTITIES
+        ld a, [currentEnemyCount]
+        ld c, a
         ld de, entityArray
         .loop
             ld a, [de]
@@ -403,7 +404,8 @@ SECTION "Entity data", ROM0
       ret
 
     bucleenemigos:
-        ld c, MAX_ENTITIES   ; Número máximo de entidades a generar
+        ld a, [currentEnemyCount]    ; Número máximo de entidades a generar
+        ld c,a
         ld b, 3 
         push af 
         ld a, 0
@@ -462,6 +464,30 @@ SECTION "Entity data", ROM0
         .fin:
             ret
 
+loadEnemyData:
+    ld a, [currentLevel]
+    cp 0
+    jr z, .level1
+    cp 1
+    jr z, .level2
+    cp 2
+    jr z, .level3
+
+
+.level1:
+    ld a, 6                    ; Número de enemigos en el nivel 1
+    ld [currentEnemyCount], a
+    ret
+
+.level2:
+    ld a, 10                   ; Número de enemigos en el nivel 2
+    ld [currentEnemyCount], a
+    ret
+.level3:
+    ld a, 15                    ; Número de enemigos en el nivel 2
+    ld [currentEnemyCount], a
+    ret
+
 
 SECTION "Entity array", WRAM0
 
@@ -476,6 +502,7 @@ SECTION "Entity array", WRAM0
     Export posicionArray
     Export numOAM
     EXport MAX_ENTITIES
+    Export TOTAL_NIVELES
 
 
     DEF posicionArray equ 0
@@ -485,6 +512,7 @@ SECTION "Entity array", WRAM0
     DEF ENTITY_SIZE     equ 7      ; Tamaño de cada entidad (8 bytes, con los atributos)
     DEF MAX_ENTITIES    equ  15  ; Número máximo de entidades
     DEF ENTITY_ARRAY_SIZE equ ENTITY_SIZE * MAX_ENTITIES  ; Tamaño total del array
+        DEF TOTAL_NIVELES equ 3    ; Por ejemplo, si tienes 3 niveles en el juego
 
     RSRESET
     DEF ENTITY_COMPONENT RB 1   ; Byte para indicar si la entidad está activa
@@ -513,3 +541,7 @@ SECTION "Trackers", WRAM0
     ENEMY_TRACKER: DS 1
     LIFE_TRACKER: DS 1
 
+SECTION "Game State", WRAM0
+
+    currentLevel:       DS 1   ; Almacena el nivel actual
+    currentEnemyCount:  DS 1   ; Almacena el número de enemigos en el nivel actual

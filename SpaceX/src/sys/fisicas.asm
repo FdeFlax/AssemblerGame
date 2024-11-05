@@ -28,31 +28,33 @@ fueraLimites:
     ret
     ;--------VER SI UN ENEMIGO HA TOCADO LA NAVE
 verificar_terminajuego:
-
+    ; Verificar si todos los enemigos fueron derrotados
     ld a, [ENEMY_TRACKER]
     cp 0
-    jp z, irEstadoFinal
+    jp z, verificar_proximo_nivel   ; Si ENEMY_TRACKER es 0, verificar si hay un próximo nivel
 
+    ; Verificar si quedan vidas
     ld a, [LIFE_TRACKER]
     cp 0
-    jp z, irEstadoFinal
-
-    
-
-    ld hl, terminajuego       
-    ld a, [hl]                 
-    cp 0                 
-    jr nz, .fin               
-
-    inc hl                    
-    ld a, [hl]                 
-    cp 0                   
-    jr nz, .fin                
-
-    call irEstadoInicio
+    jp z, irEstadoFinal             ; Si LIFE_TRACKER es 0, ir a EstadoFinal
 
 .fin:
-    ret                        ; Retornar
+    ret
+
+verificar_proximo_nivel:
+    ; Incrementar el nivel actual
+    ld a, [currentLevel]
+    inc a
+    ld [currentLevel], a
+    ; Verificar si alcanzamos el total de niveles
+    cp TOTAL_NIVELES
+    jp z, irEstadoFinal             ; Si alcanzamos el último nivel, ir al EstadoFinal
+
+    ; Preparar el siguiente nivel
+    call borrarOAM                  ; Borrar la OAM antes de iniciar el nuevo nivel
+    call loadEnemyData              ; Cargar la configuración de enemigos del nuevo nivel
+    call EstadoJuego                ; Reiniciar en EstadoJuego
+    ret                     ; Retornar
 
 empiezajuego1:
     ld hl, terminajuego    ; Cargar la dirección de terminajuego en HL
@@ -381,7 +383,8 @@ irEstadoFinal:
 
 ;;-------------ACTUALIZAR POSICIONES
  updatePosEnemigos::
-    ld c, MAX_ENTITIES                    
+    ld a, [currentEnemyCount]
+    ld c, a                    
     ld de, entityArray           
     push hl
     ld hl, entityArray
@@ -545,7 +548,8 @@ irEstadoFinal:
 
 updateOAM::
         ld hl, copiaOAM  ;; Principio de la OAM
-        ld c, MAX_ENTITIES
+        ld a, [currentEnemyCount]
+        ld c, a
         ld de, entityArray
         ; Sprite 1
             .loop
