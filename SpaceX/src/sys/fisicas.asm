@@ -2,6 +2,13 @@ DEF SCREEN_TOP_BOUND equ 0         ; Límite superior
 DEF SCREEN_BOTTOM_BOUND equ 144     ; Límite inferior (altura de la pantalla Game Boy)
 DEF SCREEN_LEFT_BOUND equ 0      ; Límite izquierdo
 DEF SCREEN_RIGHT_BOUND equ 160   ; Límite derecho (resolución de la pantalla Game Boy)
+    DEF VIDA_OAM_POS equ 28 * 4         ; Posición en la OAM para el icono de vida
+    DEF VIDA_TILE_3 equ $A4            ; Tile cuando hay 3 vidas
+    DEF VIDA_TILE_2 equ $A8             ; Tile cuando hay 2 vidas
+    DEF VIDA_TILE_1 equ $AC            ; Tile cuando hay 1 vida
+    DEF VIDA_SPRITE_ATTR equ $00        ; Atributos del sprite de vida
+    DEF VIDA_POS_X equ $10             ; Posición X para el icono de vida
+    DEF VIDA_POS_Y equ $80             ; Posición Y para el icono de vida
 
 DEF POSY_NAVE equ 126
 
@@ -202,6 +209,48 @@ checkearposiciones:
 
             ret  
 
+initVidaOAM:
+    ld hl, copiaOAM + VIDA_OAM_POS
+    ld a, VIDA_POS_Y
+    ld [hl], a                   
+    inc hl
+    ld a, VIDA_POS_X
+    ld [hl], a                   
+    inc hl
+    ld a, VIDA_TILE_3            ; Inicializa con el tile para 3 vidas
+    ld [hl], a                  
+    inc hl
+    ld a, VIDA_SPRITE_ATTR
+    ld [hl], a                   
+    ret
+updateVidaOAM:
+    ld a, [LIFE_TRACKER]
+    ld hl, copiaOAM + VIDA_OAM_POS + 2  ; Dirección del tile en la OAM
+    cp 3
+    jr z, .tres_vidas
+    cp 2
+    jr z, .dos_vidas
+    cp 1
+    jr z, .una_vida
+    jp .sin_vidas                    
+
+.tres_vidas:
+    ld a, VIDA_TILE_3
+    jr .actualizar_tile
+.dos_vidas:
+    ld a, VIDA_TILE_2
+    jr .actualizar_tile
+.una_vida:
+    ld a, VIDA_TILE_1
+    jr .actualizar_tile
+
+.actualizar_tile:
+    ld [hl], a                       
+    ret
+
+.sin_vidas:
+    call irEstadoFinal
+    ret
 
 checkearHit:
 

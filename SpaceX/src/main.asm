@@ -119,6 +119,7 @@ main::
       call initBullet
       ld hl, mapaTest
       call Cargar_mapa
+      call initVidaOAM
          .gameplay:
          ld de, entityArray
          call updateMove
@@ -129,6 +130,7 @@ main::
          call disparar
          call update_bullet
          call updateOAM
+         call updateVidaOAM
          call waitVBlank
          
          ; Comprobar si el nivel ha terminado y si no ha terminado pasa de nivel
