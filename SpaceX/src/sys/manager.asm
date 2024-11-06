@@ -495,7 +495,7 @@ loadEnemyData:
 
 
 .level1:
-    ld a, 10               
+    ld a, 8             
     ld [currentEnemyCount], a
     ret
 
