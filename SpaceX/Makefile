@@ -29,6 +29,6 @@ TARGET   :=$(PRJNAME).gb
 SAV_FILE :=$(PRJNAME).sav
 MAP_FILE :=$(PRJNAME).map 
 SYM_FILE :=$(PRJNAME).sym
-
+ 
 # Asembling and linking rules
 include cfg/rules.mk
